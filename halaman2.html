@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBT Numerasi SMP - Akari Bimbel</title>
+    <title>CBT Numerasi SMA - Akari Bimbel</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Memuat pustaka MathJax untuk merender rumus matematika (LaTeX) -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         :root {
@@ -28,187 +33,49 @@
             --active-text: #ffffff;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-        }
+        #preparationScreen { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .prep-card { background: var(--card-bg); max-width: 600px; width: 100%; border-radius: 16px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .prep-card h1 { color: var(--primary-color); font-size: 24px; margin-bottom: 20px; }
+        .rules-list { text-align: left; background: #f8fafc; padding: 20px 20px 20px 40px; border-radius: 12px; margin-bottom: 30px; color: var(--text-muted); line-height: 1.8; font-size: 14px; }
 
-        #preparationScreen {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .prep-card {
-            background: var(--card-bg);
-            max-width: 600px;
-            width: 100%;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-
-        .prep-card h1 {
-            color: var(--primary-color);
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        .rules-list {
-            text-align: left;
-            background: #f8fafc;
-            padding: 20px 20px 20px 40px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            color: var(--text-muted);
-            line-height: 1.8;
-            font-size: 14px;
-        }
-
-        #testScreen {
-            display: none; /* Disembunyikan sampai tombol mulai diklik */
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .cbt-header {
-            background: #ffffff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
+        #testScreen { display: none; flex-direction: column; min-height: 100vh; }
+        .cbt-header { background: #ffffff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 50; }
         .cbt-brand { font-weight: 700; color: var(--primary-color); font-size: 18px; }
         
-        .timer-box {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 2px solid #fca5a5;
-            transition: all 0.3s ease;
-        }
+        .timer-box { background: #fee2e2; color: #b91c1c; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 8px; border: 2px solid #fca5a5; transition: all 0.3s ease; }
+        .timer-box.warning { animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        .student-badge { background: #eff6ff; color: var(--primary-color); padding: 8px 15px; border-radius: 8px; font-size: 14px; font-weight: 600; }
         
-        .timer-box.warning {
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        .student-badge {
-            background: #eff6ff;
-            color: var(--primary-color);
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .cbt-container {
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 25px;
-            max-width: 1200px;
-            margin: 25px auto;
-            padding: 0 20px;
-            width: 100%;
-            align-items: start;
-        }
-
-        .question-area {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 35px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-        }
-
+        .cbt-container { display: grid; grid-template-columns: 1fr 320px; gap: 25px; max-width: 1200px; margin: 25px auto; padding: 0 20px; width: 100%; align-items: start; }
+        .question-area { background: var(--card-bg); border-radius: 16px; padding: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); min-height: 500px; display: flex; flex-direction: column; }
         .question-item { display: none; }
         .question-item.active { display: block; animation: fadeIn 0.4s ease; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .q-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px dashed var(--border-color);
-        }
-
+        .q-header { display: flex; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed var(--border-color); }
         .q-number { font-size: 20px; font-weight: 700; color: var(--text-main); }
         .topic-badge { background: #f3f4f6; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .q-text { font-size: 16px; line-height: 1.8; margin-bottom: 20px; overflow-x: auto; }
+        .q-image { max-width: 100%; max-height: 280px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-color); display: block; object-fit: contain; background: #fafafa; }
         
-        .q-text { font-size: 16px; line-height: 1.7; margin-bottom: 20px; }
-        .q-image { max-width: 100%; max-height: 280px; border-radius: 8px; margin: 15px 0; border: 1px solid var(--border-color); }
-
         .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
-        
-        .option-label {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #fafafa;
-            font-size: 15px;
-        }
-
+        .option-label { display: flex; align-items: center; padding: 15px; border: 2px solid var(--border-color); border-radius: 10px; cursor: pointer; transition: all 0.2s; background: #fafafa; font-size: 15px; }
         .option-label:hover { border-color: #9ca3af; background: #f3f4f6; }
         .option-label:has(input:checked) { border-color: var(--primary-color); background: #eff6ff; }
         .option-input { margin-right: 15px; width: 22px; height: 22px; accent-color: var(--primary-color); cursor: pointer; }
         .option-label:has(input:checked) .option-text { font-weight: 600; color: var(--primary-color); }
 
-        .navigation-buttons {
-            margin-top: auto;
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
+        .isian-container { margin-bottom: 30px; }
+        .isian-input { width: 100%; max-width: 400px; padding: 15px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 16px; outline: none; transition: all 0.2s; }
+        .isian-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
-        .btn {
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        .navigation-buttons { margin-top: auto; display: flex; justify-content: space-between; gap: 15px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .btn { padding: 12px 25px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .btn-outline { background: #ffffff; border: 2px solid var(--border-color); color: var(--text-main); }
         .btn-outline:hover { background: #f3f4f6; }
         .btn-primary { background: var(--primary-color); color: white; }
@@ -217,42 +84,11 @@
         .btn-submit:hover { background: #059669; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .sidebar {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            position: sticky;
-            top: 90px;
-        }
-
+        .sidebar { background: var(--card-bg); border-radius: 16px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: sticky; top: 90px; }
         .sidebar-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; text-align: center; }
-        
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .nav-box {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text-muted);
-            background: #ffffff;
-        }
-
+        .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 25px; }
+        .nav-box { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border-color); border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; color: var(--text-muted); background: #ffffff; }
         .nav-box:hover { border-color: var(--primary-color); }
-        
-        /* Status Warna Kotak Navigasi */
         .nav-box.answered { background: var(--answered-bg); border-color: var(--answered-border); color: var(--answered-text); }
         .nav-box.active { background: var(--active-bg); border-color: var(--primary-color); color: var(--active-text); }
 
@@ -260,16 +96,28 @@
         .legend-item { display: flex; align-items: center; gap: 10px; }
         .legend-box { width: 15px; height: 15px; border-radius: 4px; border: 1px solid #d1d5db; }
 
-        .loading-overlay {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.95); z-index: 1000;
-            justify-content: center; align-items: center; flex-direction: column;
-        }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.95); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        #resultContainer { display: none; max-width: 600px; margin: 40px auto; text-align: center; background: white; padding: 40px; border-radius: 16px; }
+        #resultContainer { display: none; max-width: 600px; margin: 40px auto; text-align: center; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .result-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 30px 0; }
+        .stat-card { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .stat-card.highlight { grid-column: span 3; background: #eff6ff; border-color: var(--primary-color); }
+        .stat-card.highlight .stat-val { color: var(--primary-color); font-size: 36px;}
+        .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .stat-val { font-size: 28px; font-weight: 700; margin-top: 5px; color: var(--text-main);}
+        .val-benar { color: var(--success-color); }
+        .val-salah { color: var(--danger-color); }
+        .val-kosong { color: var(--warning-color); }
 
+        .bs-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .bs-table th, .bs-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .bs-table th:first-child, .bs-table td:first-child { text-align: left; }
+        .bs-table th { background-color: #f8fafc; font-weight: 600; color: var(--text-muted); font-size: 14px;}
+        .bs-table td { font-size: 15px; }
+        .bs-radio { width: 22px; height: 22px; accent-color: var(--primary-color); cursor: pointer;}
+        
         @media (max-width: 850px) {
             .cbt-container { grid-template-columns: 1fr; }
             .sidebar { position: static; order: 2; margin-top: 20px; }
@@ -284,14 +132,14 @@
 
     <div id="preparationScreen">
         <div class="prep-card">
-            <h1>Tryout CBT Numerasi SMP</h1>
+            <h1>Tryout CBT Numerasi SMA</h1>
             <p style="margin-bottom: 20px; color: var(--text-muted);">Selamat datang, <strong id="prepStudentName">Siswa</strong>. Silakan baca peraturan sebelum memulai.</p>
             
             <ul class="rules-list">
-                <li>✅ Kuis ini terdiri dari <strong>30 Soal Adaptif</strong> (Pilihan Ganda).</li>
-                <li>✅ Waktu pengerjaan adalah <strong>70 Menit</strong> tanpa jeda.</li>
-                <li>✅ Siapkan kertas buram dan alat tulis untuk berhitung.</li>
-                <li>✅ <strong>TIDAK ADA PENGURANGAN NILAI</strong> jika jawaban salah. Kosongkan jika tidak tahu, namun disarankan untuk dijawab semua.</li>
+                <li>✅ Kuis ini terdiri dari <strong>25 Soal</strong>.</li>
+                <li>✅ Waktu pengerjaan adalah <strong>90 Menit</strong> tanpa jeda.</li>
+                <li>✅ Terdapat 4 tipe soal: <strong>Isian Singkat</strong>, <strong>Pilihan Ganda</strong>, <strong>Pilihan Ganda Kompleks</strong> (centang semua jawaban benar), dan <strong>Tabel Interaktif</strong>.</li>
+                <li>✅ <strong>TIDAK ADA PENGURANGAN NILAI</strong> jika jawaban salah. Kosongkan jika tidak tahu.</li>
                 <li>⚠️ Jika waktu habis (00:00), sistem akan <strong>menyimpan jawaban otomatis</strong>.</li>
                 <li>⚠️ <strong>JANGAN merefresh/reload</strong> halaman ini saat tes berlangsung agar jawaban tidak hilang.</li>
             </ul>
@@ -304,22 +152,20 @@
     </div>
 
     <div id="testScreen">
-        <!-- Header Utama -->
         <div class="cbt-header">
             <div class="cbt-brand">Akari Bimbel CBT</div>
             <div class="timer-box" id="timerBox">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span id="timeDisplay">70:00</span>
+                <span id="timeDisplay">90:00</span>
             </div>
             <div class="student-badge" id="studentInfoBadge">Memuat...</div>
         </div>
 
         <div class="cbt-container">
-            <!-- Sisi Kiri: Area Soal -->
             <div class="question-area">
-                <form id="formKuis">
+                <form id="formKuis" onsubmit="return false;">
                     <div id="questionsContainer">
-                        <!-- Soal di-generate via JS di sini -->
+                        <!-- Soal di-generate via JS -->
                     </div>
                 </form>
 
@@ -333,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- Sisi Kanan: Sidebar Navigasi -->
             <div class="sidebar">
                 <h3 class="sidebar-title">Navigasi Soal</h3>
                 
@@ -357,8 +202,28 @@
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
         <h2 style="color: var(--success-color); margin-bottom: 10px;">Tes Selesai!</h2>
-        <p style="color: var(--text-muted); margin-bottom: 25px;">Hasil CBT kamu sudah direkap dan berhasil dikirim ke sistem Akari Bimbel.</p>
-        <button class="btn btn-primary" onclick="window.location.href='index.html'" style="margin: 0 auto;">Kembali ke Halaman Utama</button>
+        <p style="color: var(--text-muted);">Hasil CBT kamu sudah direkap. Berikut adalah rincian pengerjaanmu:</p>
+        
+        <div class="result-stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Benar</div>
+                <div class="stat-val val-benar" id="resBenar">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Salah</div>
+                <div class="stat-val val-salah" id="resSalah">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Kosong</div>
+                <div class="stat-val val-kosong" id="resKosong">0</div>
+            </div>
+            <div class="stat-card highlight">
+                <div class="stat-label">Nilai Akhir (0-100)</div>
+                <div class="stat-val" id="resNilai">0</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="window.location.reload()" style="margin: 0 auto;">Tutup Ujian</button>
     </div>
 
     <div class="loading-overlay" id="loadingOverlay">
@@ -368,174 +233,254 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyQyq5TYr-Pq92Fn9zeodelKLNK-u9GAQDZKvbG1G78Cqu-KMimkeuOmtKX8mA7K9L_/exec'; 
-
         const studentName = localStorage.getItem('akari_nama') || 'Siswa Tanpa Nama';
         const studentClass = localStorage.getItem('akari_kelas') || 'Kelas Tidak Diketahui';
         
         document.getElementById('prepStudentName').innerText = studentName;
         document.getElementById('studentInfoBadge').innerText = `${studentName} | ${studentClass}`;
 
-        // BANK SOAL SMP - 55 Soal (HOTS)
-        const bankSoal = [
-            // 1. Bilangan Bulat dan Rasional Lanjutan
-            { topic: 'Bilangan Bulat dan Rasional Lanjutan', q: 'Hasil dari operasi -12 + (15 × (-3)) - (-40) ÷ 8 adalah...', options: ['-52', '-48', '-42', '-38'], ans: 0 },
-            { topic: 'Bilangan Bulat dan Rasional Lanjutan', q: 'Suatu ruang pendingin memiliki suhu awal 5°C. Mesin dihidupkan sehingga suhunya turun 3°C setiap 20 menit. Suhu ruangan tersebut setelah 1,5 jam adalah...', options: ['-8,5°C', '-10,5°C', '-13°C', '-15°C'], ans: 0 }, // 1.5 jam = 90 menit. 90/20 = 4.5. 4.5 * 3 = 13.5. 5 - 13.5 = -8.5
-            { topic: 'Bilangan Bulat dan Rasional Lanjutan', q: 'Nilai dari ∛512 + √1296 ÷ 2³ adalah...', options: ['12', '12.5', '13', '14'], ans: 1 }, // 8 + 36 / 8 = 8 + 4.5 = 12.5
-            { topic: 'Bilangan Bulat dan Rasional Lanjutan', q: 'Dalam kompetisi olimpiade, jawaban benar diberi skor 4, salah -2, dan tidak dijawab -1. Dari 50 soal, Budi menjawab 40 soal dan 32 di antaranya benar. Skor akhir yang diperoleh Budi adalah...', options: ['102', '112', '128', '98'], ans: 0 },
-            { topic: 'Bilangan Bulat dan Rasional Lanjutan', q: 'Seekor ikan berenang pada kedalaman 12 meter di bawah permukaan air. Seekor burung terbang pada ketinggian 15 meter tepat di atas ikan tersebut. Jarak vertikal antara burung dan ikan adalah...', options: ['3 meter', '15 meter', '27 meter', '30 meter'], ans: 2 },
+        // DEFINISI 25 SOAL
+        const finalQuestions = [
+            // SOAL 1-10
+            { 
+                id: 1, type: 'isian', topic: 'Kalkulus / Integral', 
+                q: 'Misalkan \\( k \\) suatu bilangan positif yang memenuhi \\( f(x) = 6x + k \\) dan \\[ \\int_0^k f(x) dx = f(3k) \\] Jika \\( n < k < n+1 \\) untuk suatu bilangan asli \\( n \\), maka \\( n = \\dots \\)',
+                ans: '4' 
+            },
+            { 
+                id: 2, type: 'isian', topic: 'Aljabar / Logaritma', 
+                q: 'Jika \\( \\log p = 3 \\), \\( \\log q = 12 \\), \\( \\log r = 20 \\), dan \\( \\log \\left( \\frac{p^m q}{r} \\right) = 7 \\), maka \\( m = \\dots \\)',
+                ans: '5' 
+            },
+            { 
+                id: 3, type: 'isian', topic: 'Sistem Persamaan Linear', 
+                q: 'Jumlah dua bilangan adalah 27 dan selisih kedua bilangan tersebut adalah 9. Bilangan terbesar di antara keduanya adalah . . .',
+                ans: '18' 
+            },
+            { 
+                id: 4, type: 'isian', topic: 'Peluang', 
+                q: 'Suatu set permainan kartu terdiri dari 24 kartu. Pada setiap kartu, tertulis sebuah angka, yakni bilangan asli yang kurang dari atau sama dengan 8 dan memiliki warna merah, biru, atau hijau.<br><br>Satu kartu diambil secara acak. Jika peluang terambil kartu dengan angka berupa bilangan prima <strong>atau</strong> kartu dengan warna biru adalah \\( \\frac{b}{24} \\), \\( b = \\dots \\)',
+                ans: '16' 
+            },
+            { 
+                id: 5, type: 'pg', topic: 'Pertidaksamaan', 
+                q: 'Nilai akhir siswa agar lulus suatu mata pelajaran adalah 70. Misalkan formula nilai akhir adalah \\( N = 1,3x + 15 \\) dengan \\( x \\) merupakan nilai ujian. Batasan nilai ujian agar siswa lulus adalah . . .',
+                options: ['\\( x \\ge \\frac{550}{13} \\)', '\\( x \\ge \\frac{550}{26} \\)', '\\( x > \\frac{550}{13} \\)', '\\( x \\le \\frac{550}{26} \\)', '\\( x \\le \\frac{550}{13} \\)'], 
+                ans: 0 
+            },
+            { 
+                id: 6, type: 'pg', topic: 'Geometri Analitik', 
+                q: 'Diberikan titik \\( A(2, 0) \\), \\( B(6, 0) \\), \\( C(6, 5) \\), \\( D(4, 8) \\), dan \\( E(2, 7) \\). Luas segilima \\( ABCDE \\) adalah . . .',
+                options: ['26', '32', '28', '\\( 45/2 \\)', '30'], 
+                ans: 2 
+            },
+            { 
+                id: 7, type: 'pg', topic: 'Polinomial', 
+                q: 'Diketahui polinom berderajat tiga \\( P(x) \\) memiliki akar-akar 3, 5, dan \\( -4 \\). Jika diketahui \\( P(0) = 120 \\), koefisien dari \\( x^2 \\) adalah . . .',
+                options: ['\\( -8 \\)', '6', '\\( -6 \\)', '12', '8'], 
+                ans: 0 
+            },
+            { 
+                id: 8, type: 'pg', topic: 'Polinomial', 
+                q: 'Diketahui polinom \\[ P(x) = x^3 - 6x^2 + mx + 24 \\] Didefinisikan polinom baru \\( Q(x) = P(x - 1) \\). Agar \\( x - 4 \\) menjadi faktor dari \\( Q(x) \\), nilai \\( m \\) adalah . . .',
+                options: ['\\( -3 \\)', '5', '\\( -1 \\)', '1', '3'], 
+                ans: 3 
+            },
+            { 
+                id: 9, type: 'pg', topic: 'Turunan', 
+                q: 'Diketahui kurva \\( y = px^3 - 2x^2 + q(x - 2) + 10 \\). Jika titik \\( (2, 18) \\) terletak pada kurva dan garis singgung kurva di titik tersebut sejajar dengan sumbu-\\( x \\), nilai \\( p + q = \\dots \\)',
+                options: ['\\( -12 \\)', '\\( -14 \\)', '\\( -16 \\)', '14', '12'], 
+                ans: 1 
+            },
+            { 
+                id: 10, type: 'pg', topic: 'Statistika', 
+                q: 'Kelas XI-A di suatu sekolah terdiri dari 10 siswa dengan rata-rata nilai ujian matematika 60 dan simpangan baku 2.<br>Kelas XI-B terdiri dari 40 siswa dengan rata-rata nilai ujian matematika 70 dan simpangan baku 3.<br>Jika variansi dari gabungan kedua kelas tersebut adalah \\( v \\), nilai \\( v = \\dots \\)',
+                options: ['20', '22', '24', '26', '28'], 
+                ans: 2 
+            },
             
-            // 2. Aljabar Dasar
-            { topic: 'Aljabar Dasar', q: 'Bentuk paling sederhana dari aljabar 3(2x - 5y) - 2(x + 4y) + 7y adalah...', options: ['4x - 16y', '4x - 22y', '4x + 16y', '8x - 16y'], ans: 0 }, // 6x - 15y - 2x - 8y + 7y = 4x - 16y
-            { topic: 'Aljabar Dasar', q: 'Jika diketahui x = -2 dan y = 3, maka nilai dari bentuk aljabar 2x² - 3xy + y² adalah...', options: ['25', '35', '15', '5'], ans: 1 }, // 2(4) - 3(-6) + 9 = 8 + 18 + 9 = 35
-            { topic: 'Aljabar Dasar', q: 'Sebidang tanah berbentuk persegi panjang memiliki ukuran panjang (3x + 2) meter dan lebar (2x - 1) meter. Jika keliling tanah tersebut 42 meter, maka luas tanah tersebut adalah... m²', options: ['108', '112', '120', '140'], ans: 0 }, // 2(5x + 1) = 42 => 10x + 2 = 42 => 10x = 40 => x = 4. P = 14, L = 7. Luas = 98. (Tunggu, opsi tidak ada 98. Let's fix math. 3(4)+2=14. 2(4)-1=7. 14*7=98. Let's change options)
-            { topic: 'Aljabar Dasar', q: 'Bentuk pemfaktoran dari persamaan kuadrat x² - 2x - 24 adalah...', options: ['(x-4)(x+6)', '(x+4)(x-6)', '(x-4)(x-6)', '(x+4)(x+6)'], ans: 1 },
-            { topic: 'Aljabar Dasar', q: 'Hasil kali dari (2x - 3)(x + 5) adalah...', options: ['2x² + 7x - 15', '2x² - 7x - 15', '2x² + 13x - 15', '2x² - 13x - 15'], ans: 0 }, // 2x^2 + 10x - 3x - 15 = 2x^2 + 7x - 15
-
-            // 3. Persamaan & Pertidaksamaan Linear
-            { topic: 'Persamaan & Pertidaksamaan Linear', image: 'gradien.jpg', q: 'Perhatikan grafik garis pada gambar. Jika garis biru tegak lurus dengan garis hijau, dan garis merah sejajar dengan garis hijau. Maka pernyataan yang PASTI BENAR mengenai gradien ketiga garis tersebut adalah...', options: ['Gradien merah = gradien hijau, dan hasil kali gradien merah & biru = -1', 'Gradien biru bernilai positif, gradien hijau bernilai negatif', 'Gradien merah lebih kecil dari gradien biru', 'Ketiga garis memiliki gradien yang nilainya sama'], ans: 0 },
-            { topic: 'Persamaan & Pertidaksamaan Linear', q: 'Tiga bersaudara Ana, Bona, dan Cinta mendapatkan uang saku bulanan dalam bentuk pecahan Rp5.000, Rp10.000, dan Rp20.000. Ana mendapat x lembar Rp5k, y lembar Rp10k, z lembar Rp20k. Bona mendapat y lembar Rp5k, z lembar Rp10k, x lembar Rp20k. Cinta mendapat z lembar Rp5k, x lembar Rp10k, y lembar Rp20k. Jika total uang saku ketiganya Rp700.000, kesimpulan yang benar adalah...', options: ['Ana mendapatkan uang saku sejumlah tepat 20 lembar.', 'Bona mendapatkan uang saku dengan nilai terbesar.', 'Cinta mendapatkan uang saku dengan nilai terkecil.', 'Mereka masing-masing mendapatkan total lembaran uang yang sama banyak.'], ans: 0 }, // Total = 35000(x+y+z) = 700000 => x+y+z = 20. Total lembar per anak = x+y+z = 20.
-            { topic: 'Persamaan & Pertidaksamaan Linear', q: 'Penyelesaian dari persamaan linear ½(x - 4) = ⅓(2x - 1) adalah...', options: ['x = -10', 'x = 10', 'x = -5', 'x = 5'], ans: 0 },
-            { topic: 'Persamaan & Pertidaksamaan Linear', q: 'Himpunan penyelesaian dari pertidaksamaan 3(2x - 1) ≤ 4x + 9, untuk x bilangan bulat positif adalah...', options: ['{1, 2, 3}', '{1, 2, 3, 4, 5}', '{1, 2, 3, 4, 5, 6}', '{0, 1, 2, 3, 4, 5, 6}'], ans: 2 }, // 6x - 3 <= 4x + 9 => 2x <= 12 => x <= 6.
-            { topic: 'Persamaan & Pertidaksamaan Linear', q: 'Di sebuah tempat parkir terdapat 84 kendaraan yang terdiri dari mobil (roda 4) dan sepeda motor (roda 2). Jika dihitung jumlah roda seluruhnya ada 220 buah. Banyaknya mobil di tempat parkir tersebut adalah...', options: ['26', '30', '42', '58'], ans: 0 }, // m+s=84, 4m+2s=220. 2m = 220-168 = 52. m=26.
-
-            // 4. Aritmatika Sosial
-            { topic: 'Aritmatika Sosial', q: 'Seorang pedagang membeli barang Rp150.000. Ia menjual barang tersebut dengan diskon 20% namun masih mendapatkan keuntungan 12% dari modal. Harga banderol (label) barang tersebut adalah...', options: ['Rp195.000', 'Rp210.000', 'Rp225.000', 'Rp240.000'], ans: 1 }, // Laba = 12% * 150k = 18k. Harga Jual = 168k. HJ = 80% * Banderol. Banderol = 168k / 0.8 = 210k.
-            { topic: 'Aritmatika Sosial', q: 'Pak Budi menabung Rp2.000.000 di bank dengan bunga tunggal 12% per tahun. Setelah berapa bulankah uang tabungannya menjadi Rp2.160.000?', options: ['6 bulan', '8 bulan', '9 bulan', '10 bulan'], ans: 1 },
-            { topic: 'Aritmatika Sosial', q: 'Bruto sekardus buah apel adalah 25 kg dengan persentase tara 4%. Jika harga beli apel tersebut Rp15.000 per kg netto, berapakah total uang yang dibayarkan?', options: ['Rp350.000', 'Rp360.000', 'Rp375.000', 'Rp390.000'], ans: 1 },
-            { topic: 'Aritmatika Sosial', q: 'Pemilik butik membeli gaun seharga Rp200.000. Ia ingin laba bersih 25% sesudah memberikan diskon toko sebesar 20%. Harga jual yang harus ditulis pada label adalah...', options: ['Rp285.500', 'Rp300.000', 'Rp312.500', 'Rp325.000'], ans: 2 }, // HJ target = 250k. 250k = 80% * Label => Label = 250k/0.8 = 312500
-            { topic: 'Aritmatika Sosial', q: 'Koperasi karyawan memberikan pinjaman dengan bunga 1,5% per bulan. Jika Bu Susi meminjam Rp4.000.000 dan akan dicicil selama 10 bulan, angsuran total yang harus dibayar per bulannya adalah...', options: ['Rp400.000', 'Rp440.000', 'Rp460.000', 'Rp500.000'], ans: 2 }, // Pokok = 400k. Bunga = 1.5% * 4jt = 60k. Total = 460k.
-
-            // 5. Perbandingan (Rasio) & Skala
-            { topic: 'Perbandingan (Rasio) & Skala', q: 'Sebuah proyek jembatan dapat diselesaikan dalam 30 hari oleh 12 pekerja. Jika proyek tersebut ingin dipercepat dan selesai dalam 20 hari, berapakah TAMBAHAN pekerja yang dibutuhkan?', options: ['6 orang', '8 orang', '18 orang', '24 orang'], ans: 0 },
-            { topic: 'Perbandingan (Rasio) & Skala', q: 'Perbandingan uang tabungan Ali, Budi, dan Cici adalah 2 : 3 : 5. Jika selisih uang Ali dan Cici adalah Rp45.000, berapakah jumlah total uang ketiganya?', options: ['Rp135.000', 'Rp150.000', 'Rp225.000', 'Rp300.000'], ans: 1 }, // Selisih rasio = 3. 1 unit = 15k. Total rasio = 10. Total uang = 150k.
-            { topic: 'Perbandingan (Rasio) & Skala', q: 'Skala denah sebuah gedung adalah 1 : 250. Jika pada denah gedung tersebut memiliki luas 40 cm², berapakah luas gedung sebenarnya?', options: ['10 m²', '100 m²', '250 m²', '1.000 m²'], ans: 2 }, // Rasio luas = 250^2 = 62500. 40 * 62500 = 2,500,000 cm^2 = 250 m^2
-            { topic: 'Perbandingan (Rasio) & Skala', q: 'Pembuatan jalan direncanakan selesai 40 hari oleh 15 orang. Setelah 10 hari bekerja, pekerjaan terhenti selama 5 hari karena cuaca. Agar proyek selesai tepat waktu, tambahan pekerja yang diperlukan adalah...', options: ['3 orang', '5 orang', '12 orang', '18 orang'], ans: 0 },
-            { topic: 'Perbandingan (Rasio) & Skala', q: 'Sebuah mesin cetak foto mampu mencetak 120 lembar dalam waktu 5 menit. Waktu yang dibutuhkan mesin tersebut untuk mencetak 432 lembar foto adalah...', options: ['15 menit', '18 menit', '20 menit', '24 menit'], ans: 1 },
-
-            // 6. Himpunan (Sets)
-            { topic: 'Himpunan (Sets)', q: 'Dari 40 siswa di suatu kelas, didata 24 siswa suka Matematika, 20 siswa suka Fisika, dan 5 siswa tidak suka keduanya. Banyaknya siswa yang suka KEDUA mata pelajaran tersebut adalah...', options: ['5 orang', '7 orang', '9 orang', '11 orang'], ans: 2 },
-            { topic: 'Himpunan (Sets)', q: 'Diketahui himpunan A = {x | 2 ≤ x < 10, x bilangan genap} dan B = {faktor dari 8}. Maka anggota dari himpunan irisan A ∩ B adalah...', options: ['{2, 4}', '{2, 4, 8}', '{1, 2, 4, 6, 8}', '{2, 8}'], ans: 1 }, // A = {2,4,6,8}, B = {1,2,4,8}. Irisan = {2,4,8}
-            { topic: 'Himpunan (Sets)', q: 'Jika banyaknya anggota n(A) = 15, n(B) = 12, dan irisan n(A ∩ B) = 5, maka berapakah jumlah anggota gabungan n(A ∪ B)?', options: ['22', '27', '32', '17'], ans: 0 },
-            { topic: 'Himpunan (Sets)', q: 'Diketahui S = {bilangan cacah < 10} dan A = {bilangan prima < 10}. Anggota dari himpunan komplemen A (A\') adalah...', options: ['{0, 1, 4, 6, 8, 9}', '{1, 4, 6, 8, 9}', '{2, 3, 5, 7}', '{0, 4, 6, 8}'], ans: 0 },
-            { topic: 'Himpunan (Sets)', q: 'Dalam satu RW terdapat 60 KK. 35 KK berlangganan koran, 40 KK berlangganan majalah, dan 10 KK tidak berlangganan keduanya. Banyak KK yang HANYA berlangganan koran saja adalah...', options: ['10 KK', '15 KK', '20 KK', '25 KK'], ans: 0 }, // Suka dua = (35+40) - (60-10) = 75 - 50 = 25. Hanya koran = 35 - 25 = 10.
-
-            // 7. Geometri Menengah (Fokus Gambar Wajib)
-            { topic: 'Geometri Menengah', image: 'sudut garis.jpg', q: 'Perhatikan gambar dua garis sejajar (l dan m) yang dipotong oleh sebuah transversal (t)! Jika besar sudut nomor 1 adalah (3x + 15)° dan sudut nomor 6 adalah 60°, maka nilai x adalah...', options: ['10', '15', '20', '25'], ans: 1 }, // Sdt 1 dan 6 berhubungan (1 & 5 sehadap, 5 & 6 berpelurus -> Salah. 1 dan 3 bertolak belakang. 3 & 6 dalam berseberangan. Jadi 1 = 3 = 6. 3x+15 = 60 => 3x=45 => x=15)
-            { topic: 'Geometri Menengah', image: 'juring lingkaran.jpg', q: 'Sebuah juring lingkaran OAB memiliki sudut pusat θ = 72°. Jika jari-jari lingkaran (O-A) adalah 10 cm, berapakah luas daerah juring yang diarsir tersebut? (gunakan π = 3,14)', options: ['31,4 cm²', '62,8 cm²', '78,5 cm²', '157 cm²'], ans: 1 }, // (72/360)*3.14*100 = (1/5)*314 = 62.8
-            { topic: 'Geometri Menengah', image: 'kerucut terpancung.png', q: 'Sebuah bangun kerucut terpancung memiliki jari-jari alas bawah 10 cm dan jari-jari alas atas 5 cm. Jika tinggi kerucut terpancung tersebut adalah 12 cm, berapakah panjang garis pelukis (sisi miring) kerucut terpancung tersebut?', options: ['13 cm', '14 cm', '15 cm', '17 cm'], ans: 0 }, // r_selisih = 5. tinggi = 12. miring = sqrt(5^2 + 12^2) = 13.
-            { topic: 'Geometri Menengah', image: 'tabungkerucut.jpg', q: 'Bangun ruang gabungan di atas terdiri dari tabung dan kerucut. Jika tinggi tabung (t) = 10 cm, tinggi kerucut (h) = 12 cm, dan jari-jari alasnya 5 cm, berapakah volume total bangun tersebut? (π ≈ 3,14)', options: ['942 cm³', '1.099 cm³', '1.256 cm³', '1.413 cm³'], ans: 1 }, // Vtab = 3.14 * 25 * 10 = 785. Vkerucut = 1/3 * 3.14 * 25 * 12 = 314. Total = 1099.
-            { topic: 'Geometri Menengah', image: 'luasgabungan.jpg', q: 'Perhatikan bangun datar di atas! Terdapat bangun yang salah satu sudutnya dipotong menyerupai seperempat lingkaran. Berdasarkan ukuran yang tertera, keliling total dari bangun tersebut adalah... (gunakan π = 3,14)', options: ['38,52', '41,42', '46,28', '52,00'], ans: 1 }, // R=10-4=6 atau 12-6=6. Busur = 1/4 * 2 * 3.14 * 6 = 9.42. Keliling = 10+12+4+9.42+6 = 41.42
-            { topic: 'Geometri Menengah', image: 'transformasi.jpg', q: 'Perhatikan jajargenjang ABCD pada bidang koordinat. Jika jajargenjang tersebut direfleksikan (dicerminkan) terhadap sumbu-y, lalu ditranslasikan sebesar vektor (3, -2), maka titik koordinat bayangan akhir dari titik C adalah...', options: ['(-3, 4)', '(3, -4)', '(-9, 4)', '(9, 8)'], ans: 0 }, // C awal = (6, 6). Refleksi sb-y = (-6, 6). Translasi (3,-2) = (-3, 4).
-
-            // 8. Statistika Dasar
-            { topic: 'Statistika Dasar', q: 'Rata-rata nilai ulangan 10 siswa adalah 75. Setelah 2 siswa susulan baru bergabung, rata-rata kelasnya berubah menjadi 76. Berapakah rata-rata nilai kedua siswa susulan tersebut?', options: ['78', '81', '83', '85'], ans: 1 }, // 10*75 = 750. 12*76 = 912. 912-750 = 162. 162/2 = 81.
-            { topic: 'Statistika Dasar', q: 'Diketahui nilai ulangan matematika Budi: 7, 8, 8, 9, x, 6. Jika rata-ratanya adalah 7.5, maka nilai median dari data tersebut adalah...', options: ['7.0', '7.5', '8.0', '8.5'], ans: 1 }, // 38+x = 45 => x = 7. Data diurut: 6, 7, 7, 8, 8, 9. Median = (7+8)/2 = 7.5.
-            { topic: 'Statistika Dasar', q: 'Diketahui sekumpulan data terurut: 5, 6, 7, 7, 8, 9, 10. Jangkauan Interkuartil (selisih Q3 dan Q1) dari data tersebut adalah...', options: ['2', '3', '4', '5'], ans: 1 }, // Q1=6, Q2=7, Q3=9. IQR = 9-6=3.
-            { topic: 'Statistika Dasar', q: 'Suatu data terdiri dari 35 bilangan bulat positif dengan median 22 dan bilangan terbesar 29. Misalkan rata-rata terkecil yang mungkin adalah x dan rata-rata terbesar adalah y, nilai dari x + y = ....', options: ['40,4', '37,4', '36,4', '25,4'], ans: 1 }, // x = (17*1 + 18*22 + 29)/35 = 442/35 = 12.63. y = (17*22 + 17*29 + 29)/35 = 896/35 = 25.6. Wait, soal Hots dari image: "35 bil positif median 22 terbesar 29". Min sum: 1*17 + 22*18 (karena median 22, ada min 18 angka 22) - wait, if max is 29, 17th is 1, 18th is 22... let's just stick to the image answer, option B (37,4).
-            { topic: 'Statistika Dasar', q: 'Rata-rata nilai matematika dari 15 siswa laki-laki adalah 76, sedangkan rata-rata 20 siswa perempuan adalah 83. Rata-rata gabungan seluruh siswa di kelas tersebut adalah...', options: ['79,0', '79,5', '80,0', '80,5'], ans: 2 }, // (1140 + 1660) / 35 = 2800 / 35 = 80.
-
-            // 9. Peluang & Kombinatorika
-            { topic: 'Peluang & Kombinatorika', q: 'Dua buah dadu standar dilempar undi secara bersamaan. Berapakah peluang munculnya total mata dadu berjumlah 7 atau berjumlah 10?', options: ['1/6', '1/4', '1/3', '5/18'], ans: 1 }, // jml 7 = 6, jml 10 = 3. Total = 9/36 = 1/4.
-            { topic: 'Peluang & Kombinatorika', q: 'Dari angka 1, 2, 3, 4, 5, dan 6 akan dibentuk bilangan genap yang terdiri dari 3 angka berbeda. Banyaknya susunan bilangan genap yang dapat dibentuk adalah...', options: ['120', '60', '30', '40'], ans: 1 }, // Akhir = {2,4,6} (3 cara). Sisa angka = 5. Depan = 5, Tengah = 4. 5*4*3 = 60.
-            { topic: 'Peluang & Kombinatorika', q: 'Dalam sebuah tes tertulis, siswa diwajibkan mengerjakan 8 dari 10 soal yang tersedia. Jika soal nomor 1 sampai 3 WAJIB dikerjakan, banyaknya pilihan kombinasi susunan soal yang dapat diambil siswa adalah...', options: ['10', '21', '35', '56'], ans: 1 }, // Sisa soal dipilih 5 dari 7. C(7,5) = 7! / (5!2!) = 21.
-            { topic: 'Peluang & Kombinatorika', q: 'Dalam sebuah kantong terdapat 5 kelereng merah dan 3 kelereng putih. Jika diambil 2 kelereng sekaligus secara acak, peluang terambil keduanya kelereng merah adalah...', options: ['5/14', '2/9', '5/28', '15/28'], ans: 0 }, // C(5,2) / C(8,2) = 10 / 28 = 5/14.
-            { topic: 'Peluang & Kombinatorika', q: 'Dua buah dadu dilempar bersamaan. Peluang munculnya mata dadu yang hasil kalinya adalah bilangan ganjil ATAU berjumlah 7 adalah...', options: ['5/12', '1/4', '7/36', '11/36'], ans: 0 }, // Ganjil kali ganjil = 3*3 = 9. Jumlah 7 = 6. Irisan = tidak ada (jml 7 pasti ganjil+genap). 15/36 = 5/12.
-
-            // 10. Pola Bilangan & Deret
-            { topic: 'Pola Bilangan & Deret', q: 'Diketahui barisan geometri: 80, x, y, z, 3125. Nilai terkecil yang mungkin dari x - y + z adalah...', options: ['-3120', '-1950', '480', '950'], ans: 1 }, // 80*r^4 = 3125 => r^4 = 3125/80 = 625/16. r = 5/2 atau -5/2. Jika r = -5/2: x=-200, y=500, z=-1250. x-y+z = -200-500-1250 = -1950.
-            { topic: 'Pola Bilangan & Deret', q: 'Suku ke-n dari suatu barisan aritmatika dirumuskan dengan Un = 3n - 5. Jumlah 10 suku pertama dari barisan tersebut adalah...', options: ['115', '125', '230', '250'], ans: 0 }, // U1 = -2, U10 = 25. S10 = 10/2 * (-2 + 25) = 5 * 23 = 115.
-            { topic: 'Pola Bilangan & Deret', q: 'Suatu barisan geometri memiliki suku ke-2 = 6 dan suku ke-5 = 48. Rasio dari barisan geometri tersebut adalah...', options: ['2', '3', '4', '8'], ans: 0 }, // r^3 = 48/6 = 8. r=2.
-            { topic: 'Pola Bilangan & Deret', q: 'Dua suku berikutnya dari pola bilangan berpangkat: 2, 5, 10, 17, 26, ... adalah...', options: ['35 dan 46', '37 dan 48', '37 dan 50', '39 dan 52'], ans: 2 }, // n^2 + 1. 6^2+1 = 37, 7^2+1 = 50.
-            { topic: 'Pola Bilangan & Deret', q: 'Pertambahan penduduk suatu desa setiap tahun diasumsikan mengikuti aturan barisan geometri. Pada tahun 2021 bertambah 10 orang, tahun 2023 bertambah 90 orang. Pertambahan pada tahun 2024 adalah...', options: ['180 orang', '270 orang', '360 orang', '810 orang'], ans: 1 } // U1=10, U3=90. r^2=9 => r=3. U4 = 90*3 = 270.
+            // SOAL 11-20
+            { 
+                id: 11, type: 'pg', topic: 'Sistem Persamaan Aljabar', 
+                q: 'Jika \\( p > 0 \\) dan sistem persamaan \\[ x^2 + px - y = -16 \\] \\[ -4x + y = 0 \\] memiliki tepat satu solusi, nilai \\( p = \\dots \\)',
+                options: ['6', '8', '10', '12', '14'], 
+                ans: 3 
+            },
+            { 
+                id: 12, type: 'pg', topic: 'Geometri Ruang', 
+                q: 'Sebuah wadah aluminium berbentuk silinder tanpa tutup memiliki jari-jari bagian dalam 15 cm dan tinggi bagian dalam 20 cm. Tebal selimut dan alas silinder tersebut adalah 1 cm.<br>Jika volume bahan (aluminium) yang diperlukan untuk membuat wadah tersebut adalah \\( k\\pi \\text{ cm}^3 \\), nilai \\( k = \\dots \\)',
+                options: ['856', '866', '876', '886', '896'], 
+                ans: 2 
+            },
+            { 
+                id: 13, type: 'pg', topic: 'Limit Fungsi', 
+                q: 'Nilai dari \\[ \\lim_{x \\to \\infty} 4x \\left( \\sqrt{1 + \\frac{5}{x}} - \\sqrt{1 - \\frac{5}{x}} \\right) = \\dots \\]',
+                options: ['10', '15', '20', '25', '30'], 
+                ans: 2 
+            },
+            { 
+                id: 14, type: 'pg', topic: 'Persamaan Lingkaran', 
+                q: 'Garis \\( x = 3 \\) memotong lingkaran \\[ x^2 - 12x + y^2 - 4y = C \\] di titik \\( A \\) dan \\( B \\). Jika titik \\( A \\) berada di kuadran I dan gradien garis singgung lingkaran di titik \\( A \\) adalah \\( m = \\frac{3}{4} \\), nilai \\( C = \\dots \\)',
+                options: ['\\( -10 \\)', '\\( -12 \\)', '\\( -15 \\)', '15', '25'], 
+                ans: 2 
+            },
+            { 
+                id: 15, type: 'pg', topic: 'Aplikasi Trigonometri', 
+                q: 'Andi merancang kanal saluran air hujan dari lembaran seng panjang yang memiliki lebar 60 cm. Saluran ini dibuat dengan melipat kedua sisi seng ke atas sehingga membentuk penampang berbentuk trapesium sama kaki tanpa tutup (seperti pada ilustrasi).<br><br>Bagian dasar saluran memiliki lebar \\( p = 20 \\text{ cm} \\), dan kedua sisi dinding yang dilipat masing-masing memiliki panjang \\( q = 20 \\text{ cm} \\). Jika sudut kemiringan dinding saluran terhadap garis horizontal adalah \\( \\theta \\), luas penampang saluran air sebagai fungsi dalam \\( \\theta \\) adalah \\[ L = a \\sin \\theta + b \\sin(2\\theta) \\] dengan \\( a + b = \\dots \\)',
+                image: 'trapezoid.jpg',
+                options: ['400', '500', '600', '800', '1000'], 
+                ans: 2 
+            },
+            { 
+                id: 16, type: 'pg', topic: 'Polinomial / Suku Banyak', 
+                q: 'Diketahui suku banyak \\( f(x) = x^4 + ax^3 + bx^2 + 5x - 2 \\) apabila dibagi oleh \\( x^2 - 4 \\) menghasilkan sisa \\( 13x + 2 \\). Nilai dari \\( a + b = \\dots \\)',
+                options: ['\\( -1 \\)', '0', '1', '\\( -2 \\)', '2'], 
+                ans: 0 
+            },
+            { 
+                id: 17, type: 'pg', topic: 'Fungsi / Aplikasi Turunan', 
+                q: 'Sebuah tangki penyimpanan zat cair mengalami penambahan kapasitas volume saat terkena panas, yang dapat dinyatakan dalam fungsi berikut: \\[ V(T) = 0,04T^3 + 0,5T^2 + 15T \\] dengan \\( T \\) adalah suhu dalam derajat celcius dan \\( V(T) \\) adalah penambahan volume dalam liter. Apabila terdapat 8 tangki dengan jenis dan ukuran yang sama, total penambahan volume dari tangki-tangki tersebut ketika terkena panas dengan suhu yang sama dapat dinyatakan dengan . . .',
+                options: ['\\( 0,32T^3 + 4T^2 + 120T \\)', '\\( 0,4T^3 + 5T^2 + 150T \\)', '\\( 0,32T^3 + 4T^2 + 15T \\)', '\\( 0,04T^3 + 0,5T^2 + 120T \\)', '\\( 0,32T^3 + 0,5T^2 + 120T \\)'], 
+                ans: 0 
+            },
+            { 
+                id: 18, type: 'pg_kompleks', topic: 'Transformasi Geometri', 
+                q: 'Garis \\( g \\) merupakan bayangan garis \\( 4x + 3y = 12 \\) yang dirotasikan sejauh \\( 90^\\circ \\) berlawanan arah jarum jam dengan pusat rotasi \\( (1, -1) \\). Manakah koordinat titik yang terletak pada garis \\( g \\)?<br><br><strong>Pilihlah semua jawaban benar! Jawaban benar lebih dari satu.</strong>',
+                options: ['\\( (0, 1) \\)', '\\( (2, 2) \\)', '\\( (-4, -2) \\)', '\\( (4, 4) \\)', '\\( (1, 3) \\)'], 
+                ans: [0, 2, 3] 
+            },
+            { 
+                id: 19, type: 'pg', topic: 'Limit Fungsi / Asimtot', 
+                q: 'Seorang pengusaha roti menjual dagangannya sebanyak \\( x \\) bungkus dan akan memperoleh keuntungan (dalam jutaan rupiah) yang dapat dinyatakan dengan fungsi \\[ K(x) = \\frac{8x^2 + 5x + 12}{2x^2 + 4x + 5} \\] Keuntungan yang akan diperoleh pengusaha tersebut, apabila ia menjual roti dengan jumlah sangat banyak adalah . . .',
+                options: ['Rp2.000.000,00', 'Rp4.000.000,00', 'Rp6.000.000,00', 'Rp8.000.000,00', 'Rp10.000.000,00'], 
+                ans: 1 
+            },
+            { 
+                id: 20, type: 'pg_kompleks', topic: 'Limit Fungsi Trigonometri', 
+                q: 'Diberikan sebuah segitiga yang diletakkan di dalam setengah lingkaran dengan titik pusat \\( O \\). Kedua sisi segitiga bersinggungan tepat dari titik \\( O \\) ke busur lingkaran sehingga memiliki panjang yang sama dengan jari-jari lingkaran. Kedua sisi tersebut mengapit sudut \\( \\alpha \\).<br><br>Luas daerah segitiga dinyatakan dengan \\( P(\\alpha) \\) dan luas daerah setengah lingkaran dinyatakan dengan \\( Q(\\alpha) \\) dimana \\( 0 < \\alpha < \\pi \\).<br>Bagaimana nilai limit fungsi perbandingan luas tersebut? <strong>Pilihlah semua pernyataan yang benar! Jawaban benar lebih dari satu.</strong>',
+                options: [
+                    '\\( \\lim_{\\alpha \\to \\pi/6} \\frac{P(\\alpha)}{Q(\\alpha)} = \\frac{1}{2\\pi} \\)',
+                    '\\( \\lim_{\\alpha \\to \\pi/4} \\frac{P(\\alpha)}{Q(\\alpha)} = \\frac{\\sqrt{2}}{\\pi} \\)',
+                    '\\( \\lim_{\\alpha \\to \\pi/2} \\frac{P(\\alpha)}{Q(\\alpha)} = \\frac{1}{\\pi} \\)',
+                    '\\( \\lim_{\\alpha \\to \\pi/3} \\frac{P(\\alpha)}{Q(\\alpha)} = \\frac{\\sqrt{3}}{2\\pi} \\)',
+                    '\\( \\lim_{\\alpha \\to 5\\pi/6} \\frac{P(\\alpha)}{Q(\\alpha)} = \\frac{1}{\\pi} \\)'
+                ], 
+                ans: [0, 2, 3] 
+            },
+            
+            // SOAL 21-25
+            {
+                id: 21, type: 'tabel_bs', topic: 'Aritmetika / Geometri Terapan',
+                q: 'Pak Budi akan membuat kerangka ornamen jendela berbentuk lingkaran. Diketahui jari-jari lingkaran tersebut dirancang sebesar \\( r = \\frac{\\sqrt{3}}{2} \\) meter. Beliau ingin membeli logam dengan kriteria "Pas". Maksud pas di sini adalah: panjang logam cukup untuk membuat kerangka dan sisanya tidak lebih dari 1 meter.<br><br>Berikut ini adalah jenis logam dan panjangnya yang dapat dipilih Pak Budi:<br><ul><li><strong>Logam X:</strong> Panjang 5 m</li><li><strong>Logam Y:</strong> Panjang 6 m</li><li><strong>Logam Z:</strong> Panjang 7 m</li></ul><br>Tentukan apakah pilihan logam yang akan dibeli Pak Budi berikut ini <strong>Pas</strong> atau <strong>Tidak Pas</strong>! (Gunakan \\( \\pi \\approx 3,14 \\) dan \\( \\sqrt{3} \\approx 1,73 \\))',
+                col1: 'Pas', col2: 'Tidak Pas',
+                statements: [
+                    'Membeli 1 buah logam Y',
+                    'Membeli 1 buah logam Z',
+                    'Membeli 2 buah logam X'
+                ],
+                ans: [0, 1, 1] 
+            },
+            {
+                id: 22, type: 'tabel_bs', topic: 'Aljabar / Operasi Biner',
+                q: 'Operasi biner \\( \\otimes \\) didefinisikan sebagai \\( x \\otimes y = \\frac{(x+y)^2 - 2xy}{x+y} \\) untuk setiap bilangan real tidak negatif \\( x \\) dan \\( y \\).<br>Jika \\( m \\otimes 3 = 5 \\), tentukan <strong>Benar</strong> atau <strong>Salah</strong> pada setiap pernyataan berikut.',
+                col1: 'Benar', col2: 'Salah',
+                statements: [
+                    '\\( m \\) adalah bilangan genap.',
+                    '\\( m \\) habis dibagi 4.',
+                    '\\( m \\otimes 2 = 5 \\)'
+                ],
+                ans: [0, 1, 0] 
+            },
+            {
+                id: 23, type: 'pg', topic: 'Fungsi Komposisi',
+                image: 'fungsikomposisi.jpg',
+                q: 'Tentukan nilai \\( (g \\circ f)(3) + (f - g)(5) = \\dots \\)',
+                options: ['5', '6', '7', '8', '9'],
+                ans: 3 
+            },
+            {
+                id: 24, type: 'pg', topic: 'Grafik Fungsi Kuadrat / Mutlak',
+                image: 'komposisipertidaksamaan.jpg',
+                q: 'Diberikan grafik fungsi \\( y = f(x) \\) yang terdefinisi pada interval \\( 2 \\le x \\le 8 \\). Berapa banyak pasangan titik \\( (x, y) \\) pada grafik tersebut yang \\( x \\) dan \\( y \\) keduanya merupakan bilangan bulat?',
+                options: ['5', '6', '7', '8', '9'],
+                ans: 2 
+            },
+            {
+                id: 25, type: 'pg', topic: 'Kesebangunan',
+                image: 'kesebangunan.jpg',
+                q: 'Misalkan \\( ABC \\) adalah segitiga siku-siku dengan \\( \\angle ACB = 90^\\circ \\). Titik \\( D \\) adalah titik tengah sisi \\( AB \\) dan titik \\( E \\) terletak pada sisi \\( AC \\) sehingga \\( DE \\) tegak lurus \\( AB \\).<br><br>Jika panjang \\( AB = 2\\sqrt{35} \\) dan \\( AC = 10 \\), maka panjang \\( CE \\) adalah \\( \\dots \\)',
+                options: ['2', '3', '4', '5', '6'],
+                ans: 1 
+            }
         ];
 
-        let finalQuestions = [];
-        const totalQuestions = 30;
-
-        // Distribusi Kuota (Total 30)
-        const quotas = {
-            'Bilangan Bulat dan Rasional Lanjutan': 3,
-            'Aljabar Dasar': 3,
-            'Persamaan & Pertidaksamaan Linear': 4, 
-            'Aritmatika Sosial': 3,
-            'Perbandingan (Rasio) & Skala': 2,
-            'Himpunan (Sets)': 2,
-            'Geometri Menengah': 6, 
-            'Statistika Dasar': 3,
-            'Peluang & Kombinatorika': 2,
-            'Pola Bilangan & Deret': 2
-        };
-
-        function shuffleArray(array) {
-            let arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        // 1. Ekstrak soal gambar dan pastikan masuk duluan
-        let allImageQuestions = bankSoal.filter(q => q.image);
-        finalQuestions.push(...allImageQuestions);
-
-        // Update sisa kuota setelah gambar diambil
-        allImageQuestions.forEach(imgQ => {
-            if(quotas[imgQ.topic] > 0) quotas[imgQ.topic]--;
-        });
-
-        // 2. Isi sisa kuota dengan soal non-gambar
-        let allTextQuestions = bankSoal.filter(q => !q.image);
-        let topics = Object.keys(quotas);
-
-        topics.forEach(topic => {
-            let availableQs = shuffleArray(allTextQuestions.filter(q => q.topic === topic));
-            let needed = quotas[topic];
-            
-            for(let i=0; i<needed && i<availableQs.length; i++) {
-                finalQuestions.push(availableQs[i]);
-            }
-        });
-
-        // 3. Acak final agar nomor urut ujian siswa beda-beda
-        finalQuestions = shuffleArray(finalQuestions);
-
+        const totalQuestions = finalQuestions.length;
         let currentIndex = 0;
         let timerInterval;
-        const TOTAL_TIME_SEC = 70 * 60; // 70 menit
+        const TOTAL_TIME_SEC = 90 * 60; // 90 menit
+        let currentAnswers = {}; 
 
-        // -- TAMBAHAN CBT: Cek jika ada ujian yang sedang berlangsung saat direfresh --
         window.addEventListener('load', () => {
             if (localStorage.getItem('akari_cbt_endTime')) {
-                resumeTest(); // Potong kompas, langsung masuk ke soal ujian
+                resumeTest();
             }
         });
+
+        function startTest() {
+            document.getElementById('preparationScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'flex';
+            
+            buildTestUI();
+            
+            const endTime = Date.now() + (TOTAL_TIME_SEC * 1000);
+            localStorage.setItem('akari_cbt_endTime', endTime);
+            
+            startTimerInterval();
+        }
 
         function resumeTest() {
             document.getElementById('preparationScreen').style.display = 'none';
             document.getElementById('testScreen').style.display = 'flex';
             
-            // 1. Tarik soal yang tersimpan agar tidak teracak ulang
-            const savedQs = localStorage.getItem('akari_cbt_questions');
-            if (savedQs) finalQuestions = JSON.parse(savedQs);
-            
             buildTestUI();
             
-            // 2. Tarik jawaban siswa sebelumnya agar tidak hilang
             const savedAnswers = JSON.parse(localStorage.getItem('akari_cbt_answers') || '{}');
+            currentAnswers = savedAnswers;
+
             for (let i = 0; i < finalQuestions.length; i++) {
-                if (savedAnswers[i] !== undefined) {
-                    const radio = document.getElementById(`q${i}_opt${savedAnswers[i]}`);
-                    if (radio) {
-                        radio.checked = true;
+                const ans = currentAnswers[i];
+                if (ans !== undefined) {
+                    if (finalQuestions[i].type === 'isian' && ans !== "") {
+                        document.getElementById(`q${i}_isian`).value = ans;
                         document.getElementById(`nav_box_${i}`).classList.add('answered');
+                    } else if (finalQuestions[i].type === 'pg' && ans !== "") {
+                        const radio = document.getElementById(`q${i}_opt${ans}`);
+                        if(radio) radio.checked = true;
+                        document.getElementById(`nav_box_${i}`).classList.add('answered');
+                    } else if (finalQuestions[i].type === 'pg_kompleks' && Array.isArray(ans) && ans.length > 0) {
+                        ans.forEach(val => {
+                            const cb = document.getElementById(`q${i}_opt${val}`);
+                            if(cb) cb.checked = true;
+                        });
+                        document.getElementById(`nav_box_${i}`).classList.add('answered');
+                    } else if (finalQuestions[i].type === 'tabel_bs' && Array.isArray(ans) && ans.length > 0) {
+                        ans.forEach((val, statementIndex) => {
+                            if (val !== null && val !== undefined) {
+                                const radio = document.getElementById(`q${i}_stmt${statementIndex}_val${val}`);
+                                if(radio) radio.checked = true;
+                            }
+                        });
+                        
+                        let allAnswered = true;
+                        for(let k=0; k<finalQuestions[i].statements.length; k++){
+                            if(ans[k] === null || ans[k] === undefined) allAnswered = false;
+                        }
+                        if(allAnswered) document.getElementById(`nav_box_${i}`).classList.add('answered');
                     }
                 }
             }
             startTimerInterval();
         }
-        // --------------------------------------------------------------------------
 
         function buildTestUI() {
             const container = document.getElementById('questionsContainer');
@@ -546,24 +491,70 @@
 
             finalQuestions.forEach((q, index) => {
                 const no = index + 1;
-                
-                // Build Options
-                let optionsHTML = '';
-                q.options.forEach((opt, i) => {
-                    const optId = `q${index}_opt${i}`;
-                    const abjad = String.fromCharCode(65 + i);
-                    optionsHTML += `
-                        <label class="option-label" for="${optId}">
-                            <input type="radio" class="option-input" name="question_${index}" id="${optId}" value="${i}" onchange="markAnswered(${index})">
-                            <span class="option-text">${abjad}. ${opt}</span>
-                        </label>
+                let answerAreaHTML = '';
+
+                if (q.type === 'isian') {
+                    answerAreaHTML = `
+                        <div class="isian-container">
+                            <p class="text-sm text-gray-500 mb-2 font-medium"><span class="text-blue-500 mr-2">ℹ️</span> Isikan dengan angka bulat atau desimal (gunakan titik untuk desimal, tanpa spasi).</p>
+                            <input type="text" inputmode="text" class="isian-input" id="q${index}_isian" oninput="markAnsweredIsian(${index})" placeholder="Ketik jawaban di sini...">
+                        </div>
                     `;
-                });
+                } else if (q.type === 'pg') {
+                    let optionsHTML = '';
+                    q.options.forEach((opt, i) => {
+                        const optId = `q${index}_opt${i}`;
+                        const abjad = String.fromCharCode(65 + i); 
+                        optionsHTML += `
+                            <label class="option-label" for="${optId}">
+                                <input type="radio" class="option-input" name="question_${index}" id="${optId}" value="${i}" onchange="markAnsweredPG(${index})">
+                                <span class="option-text">(${abjad}) ${opt}</span>
+                            </label>
+                        `;
+                    });
+                    answerAreaHTML = `<div class="options-grid">${optionsHTML}</div>`;
+                } else if (q.type === 'pg_kompleks') {
+                    let optionsHTML = '';
+                    q.options.forEach((opt, i) => {
+                        const optId = `q${index}_opt${i}`;
+                        optionsHTML += `
+                            <label class="option-label" for="${optId}">
+                                <input type="checkbox" class="option-input" name="question_${index}" id="${optId}" value="${i}" onchange="markAnsweredKompleks(${index})">
+                                <span class="option-text">${opt}</span>
+                            </label>
+                        `;
+                    });
+                    answerAreaHTML = `<div class="options-grid">${optionsHTML}</div>`;
+                } else if (q.type === 'tabel_bs') {
+                    let rowsHTML = '';
+                    q.statements.forEach((stmt, i) => {
+                        rowsHTML += `
+                            <tr>
+                                <td>${stmt}</td>
+                                <td><input type="radio" name="q${index}_stmt${i}" id="q${index}_stmt${i}_val0" value="0" class="bs-radio" onchange="markAnsweredTabelBS(${index})"></td>
+                                <td><input type="radio" name="q${index}_stmt${i}" id="q${index}_stmt${i}_val1" value="1" class="bs-radio" onchange="markAnsweredTabelBS(${index})"></td>
+                            </tr>
+                        `;
+                    });
+                    answerAreaHTML = `
+                        <table class="bs-table">
+                            <thead>
+                                <tr>
+                                    <th>Pernyataan</th>
+                                    <th style="width: 120px;">${q.col1}</th>
+                                    <th style="width: 120px;">${q.col2}</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHTML}</tbody>
+                        </table>
+                    `;
+                }
 
-                // Build Image (if any)
-                let imageHTML = q.image ? `<img src="${q.image}" class="q-image" alt="Ilustrasi" onerror="this.src='https://placehold.co/400x200/f3f4f6/4b5563?text=Gambar+Tidak+Ditemukan'">` : '';
+                let imgHtml = '';
+                if (q.image) {
+                    imgHtml = `<img src="${q.image}" class="q-image" alt="Ilustrasi Soal" onerror="this.src='https://placehold.co/400x200/f3f4f6/4b5563?text=Gambar+Ilustrasi'">`;
+                }
 
-                // Build Question Card
                 htmlQuestions += `
                     <div class="question-item" id="question_box_${index}">
                         <div class="q-header">
@@ -571,41 +562,26 @@
                             <div class="topic-badge">${q.topic}</div>
                         </div>
                         <div class="q-text">${q.q}</div>
-                        ${imageHTML}
-                        <div class="options-grid">
-                            ${optionsHTML}
-                        </div>
+                        ${imgHtml}
+                        ${answerAreaHTML}
                     </div>
                 `;
 
-                // Build Nav Grid Box
                 htmlGrid += `<div class="nav-box" id="nav_box_${index}" onclick="jumpToQuestion(${index})">${no}</div>`;
             });
 
             container.innerHTML = htmlQuestions;
             grid.innerHTML = htmlGrid;
             
-            showQuestion(0); // Tampilkan soal no 1
-        }
-
-        function startTest() {
-            document.getElementById('preparationScreen').style.display = 'none';
-            document.getElementById('testScreen').style.display = 'flex';
+            showQuestion(0);
             
-            buildTestUI();
-            
-            // Simpan paket soal ke memori agar saat refresh tidak berubah
-            localStorage.setItem('akari_cbt_questions', JSON.stringify(finalQuestions));
-            
-            // Set waktu berakhir = Waktu nyata saat ini + 70 Menit ke depan
-            const endTime = Date.now() + (TOTAL_TIME_SEC * 1000);
-            localStorage.setItem('akari_cbt_endTime', endTime);
-            
-            startTimerInterval();
+            if (window.MathJax) {
+                window.MathJax.typesetPromise();
+            }
         }
 
         function startTimerInterval() {
-            updateTimerDisplay(); // Panggil sekali di detik ke-0 agar tidak delay
+            updateTimerDisplay();
             timerInterval = setInterval(updateTimerDisplay, 1000);
         }
 
@@ -613,7 +589,6 @@
             const endTime = parseInt(localStorage.getItem('akari_cbt_endTime'));
             if (!endTime) return;
 
-            // Hitung sisa waktu mengacu pada jam sistem nyata (kebal freeze)
             let timeLeft = Math.floor((endTime - Date.now()) / 1000);
 
             if (timeLeft <= 0) {
@@ -636,17 +611,14 @@
         }
 
         function showQuestion(index) {
-            // Sembunyikan semua
             document.querySelectorAll('.question-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-box').forEach(el => el.classList.remove('active'));
             
-            // Tampilkan yg aktif
             document.getElementById(`question_box_${index}`).classList.add('active');
             document.getElementById(`nav_box_${index}`).classList.add('active');
             
             currentIndex = index;
             
-            // Update tombol Prev/Next
             document.getElementById('btnPrev').disabled = (currentIndex === 0);
             document.getElementById('btnNext').disabled = (currentIndex === finalQuestions.length - 1);
         }
@@ -660,32 +632,88 @@
             showQuestion(index);
         }
 
-        function markAnswered(index) {
-            document.getElementById(`nav_box_${index}`).classList.add('answered');
-            
-            // Simpan jawaban siswa secara real-time setiap kali mengklik opsi
-            const selectedOption = document.querySelector(`input[name="question_${index}"]:checked`);
-            if (selectedOption) {
-                let savedAnswers = JSON.parse(localStorage.getItem('akari_cbt_answers') || '{}');
-                savedAnswers[index] = selectedOption.value;
-                localStorage.setItem('akari_cbt_answers', JSON.stringify(savedAnswers));
+        function markAnsweredIsian(index) {
+            const val = document.getElementById(`q${index}_isian`).value;
+            currentAnswers[index] = val;
+            if (val.trim() !== "") {
+                document.getElementById(`nav_box_${index}`).classList.add('answered');
+            } else {
+                document.getElementById(`nav_box_${index}`).classList.remove('answered');
+            }
+            localStorage.setItem('akari_cbt_answers', JSON.stringify(currentAnswers));
+        }
+
+        function markAnsweredPG(index) {
+            const selected = document.querySelector(`input[name="question_${index}"]:checked`);
+            if (selected) {
+                currentAnswers[index] = selected.value;
+                document.getElementById(`nav_box_${index}`).classList.add('answered');
+                localStorage.setItem('akari_cbt_answers', JSON.stringify(currentAnswers));
             }
         }
 
+        function markAnsweredKompleks(index) {
+            const checkedBoxes = document.querySelectorAll(`input[name="question_${index}"]:checked`);
+            let vals = [];
+            checkedBoxes.forEach(cb => vals.push(parseInt(cb.value)));
+            currentAnswers[index] = vals;
+            
+            if (vals.length > 0) {
+                document.getElementById(`nav_box_${index}`).classList.add('answered');
+            } else {
+                document.getElementById(`nav_box_${index}`).classList.remove('answered');
+            }
+            localStorage.setItem('akari_cbt_answers', JSON.stringify(currentAnswers));
+        }
+
+        function markAnsweredTabelBS(index) {
+            const q = finalQuestions[index];
+            let ansArray = [];
+            let allAnswered = true;
+
+            for (let i = 0; i < q.statements.length; i++) {
+                const checkedNode = document.querySelector(`input[name="q${index}_stmt${i}"]:checked`);
+                if (checkedNode) {
+                    ansArray.push(parseInt(checkedNode.value));
+                } else {
+                    ansArray.push(null);
+                    allAnswered = false;
+                }
+            }
+            
+            currentAnswers[index] = ansArray;
+            
+            if (allAnswered) {
+                document.getElementById(`nav_box_${index}`).classList.add('answered');
+            } else {
+                document.getElementById(`nav_box_${index}`).classList.remove('answered');
+            }
+            localStorage.setItem('akari_cbt_answers', JSON.stringify(currentAnswers));
+        }
+
         function confirmSubmit() {
-            // Cek ada yang kosong ga
             let unanswered = 0;
             for(let i=0; i<finalQuestions.length; i++) {
-                if(!document.querySelector(`input[name="question_${i}"]:checked`)) unanswered++;
+                const ans = currentAnswers[i];
+                if (ans === undefined || ans === null || (typeof ans === 'string' && ans.trim() === '') || (Array.isArray(ans) && ans.length === 0)) {
+                    unanswered++;
+                }
+                if (finalQuestions[i].type === 'tabel_bs') {
+                    if (Array.isArray(ans)) {
+                        if (ans.includes(null) || ans.length < finalQuestions[i].statements.length) {
+                             unanswered++;
+                        }
+                    } else {
+                         unanswered++;
+                    }
+                }
             }
             
             let msg = unanswered > 0 
                 ? `Masih ada ${unanswered} soal yang belum dijawab. Yakin ingin menyelesaikan ujian?`
                 : "Kamu sudah menjawab semua soal. Yakin ingin mengumpulkan sekarang?";
                 
-            if(confirm(msg)) {
-                processSubmission();
-            }
+            if(confirm(msg)) { processSubmission(); }
         }
 
         function autoSubmit() {
@@ -695,124 +723,64 @@
 
         function processSubmission() {
             clearInterval(timerInterval);
-            
             document.getElementById('testScreen').style.display = 'none';
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             let totalCorrect = 0;
-            let totalKosong = 0; // Tambahan variabel kosong
-            let topicStats = {};
+            let totalKosong = 0;
             
-            // Setup stats map
-            Object.keys(quotas).forEach(t => {
-                topicStats[t] = { correct: 0, total: 0 };
-            });
-
-            // Grading
             finalQuestions.forEach((q, index) => {
-                topicStats[q.topic].total++;
-                const selectedOption = document.querySelector(`input[name="question_${index}"]:checked`);
+                const ans = currentAnswers[index];
                 
-                if (selectedOption) {
-                    if (parseInt(selectedOption.value) === q.ans) {
-                        totalCorrect++;
-                        topicStats[q.topic].correct++;
+                if (ans === undefined || ans === null || 
+                   (typeof ans === 'string' && String(ans).trim() === '') || 
+                   (Array.isArray(ans) && ans.length === 0)) {
+                    totalKosong++;
+                } else {
+                    if (q.type === 'isian') {
+                        if (String(ans).trim().toLowerCase() === String(q.ans).trim().toLowerCase()) {
+                            totalCorrect++;
+                        }
+                    } else if (q.type === 'pg') {
+                        if (parseInt(ans) === parseInt(q.ans)) {
+                            totalCorrect++;
+                        }
+                    } else if (q.type === 'pg_kompleks') {
+                        if (Array.isArray(ans) && Array.isArray(q.ans)) {
+                            let isCorrect = ans.length === q.ans.length && q.ans.every(val => ans.includes(val));
+                            if(isCorrect) totalCorrect++;
+                        }
+                    } else if (q.type === 'tabel_bs') {
+                         if (Array.isArray(ans) && Array.isArray(q.ans)) {
+                             let isCorrect = true;
+                             if(ans.length !== q.ans.length) isCorrect = false;
+                             else {
+                                 for(let i=0; i<q.ans.length; i++) {
+                                     if(ans[i] !== q.ans[i]) isCorrect = false;
+                                 }
+                             }
+                             if(isCorrect) totalCorrect++;
+                         }
                     }
-                } else {
-                    totalKosong++; // Hitung jika tidak ada opsi yang dipilih
                 }
             });
 
-            // Hitung Salah
             let totalSalah = totalQuestions - totalCorrect - totalKosong;
-
-            // Score out of 100
             const finalScore = Math.round((totalCorrect / totalQuestions) * 100); 
-            let tingkatSkill = finalScore >= 80 ? "Expert" : (finalScore >= 55 ? "Moderate" : "Beginner");
 
-            // Hitung Durasi (UPDATE MENGGUNAKAN WAKTU ASLI)
-            const endTime = parseInt(localStorage.getItem('akari_cbt_endTime'));
-            let timeSpentInSeconds = TOTAL_TIME_SEC; 
-            if (endTime) {
-                const timeLeftNow = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
-                timeSpentInSeconds = TOTAL_TIME_SEC - timeLeftNow;
-            }
-            const spentMin = Math.floor(timeSpentInSeconds / 60);
-            const spentSec = timeSpentInSeconds % 60;
-            const durasiText = `${spentMin} Menit ${spentSec} Detik`;
-
-            // Format Detail & Kategori per Topik
-            let detailArr = [];
-            let kategoriTopikArr = [];
-
-            for (const [topic, stat] of Object.entries(topicStats)) {
-                if(stat.total > 0) {
-                    let shortTopic = topic.split(' ')[0]; // Ambil kata pertama (cth: "Bilangan", "Aljabar")
-                    detailArr.push(`${shortTopic}: ${stat.correct}/${stat.total}`);
-
-                    // Menentukan Predikat Topik
-                    let persentaseTopik = stat.correct / stat.total;
-                    let predikat = "Need Improvement";
-                    if (persentaseTopik >= 0.8) predikat = "Excellence";
-                    else if (persentaseTopik >= 0.5) predikat = "Good";
-
-                    kategoriTopikArr.push(`${shortTopic} : ${predikat}`);
-                }
-            }
-            const detailText = detailArr.join(' | ');
-
-            const payload = {
-                action: 'simpanHasilTes',
-                data: {
-                    timestamp: new Date().toLocaleString('id-ID'),
-                    nama: studentName,
-                    kelas: studentClass,
-                    skor: finalScore,
-                    benar: totalCorrect,
-                    salah: totalSalah,
-                    kosong: totalKosong,
-                    tingkat_skill: tingkatSkill,
-                    durasi: durasiText, 
-                    detail: detailText,
-                    // Memasukkan array kategori ke 10 variabel terpisah
-                    kat_1: kategoriTopikArr[0] || "-",
-                    kat_2: kategoriTopikArr[1] || "-",
-                    kat_3: kategoriTopikArr[2] || "-",
-                    kat_4: kategoriTopikArr[3] || "-",
-                    kat_5: kategoriTopikArr[4] || "-",
-                    kat_6: kategoriTopikArr[5] || "-",
-                    kat_7: kategoriTopikArr[6] || "-",
-                    kat_8: kategoriTopikArr[7] || "-",
-                    kat_9: kategoriTopikArr[8] || "-",
-                    kat_10: kategoriTopikArr[9] || "-"
-                }
-            };
-
-            fetch(scriptURL, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload) 
-            })
-            .then(response => response.json())
-            .then(data => {
+            setTimeout(() => {
                 document.getElementById('loadingOverlay').style.display = 'none';
-                if (data.status === 'success') {
-                    document.getElementById('resultContainer').style.display = 'block';
-                    
-                    // BERSIHKAN MEMORI UJIAN SETELAH SUKSES SUBMIT
-                    // Agar jika dia buka web lagi, bisa ikut tes dari awal.
-                    localStorage.removeItem('akari_cbt_endTime');
-                    localStorage.removeItem('akari_cbt_questions');
-                    localStorage.removeItem('akari_cbt_answers');
-                } else {
-                    alert("Respon API gagal: " + data.message);
-                }
-            })
-            .catch(error => {
-                document.getElementById('loadingOverlay').style.display = 'none';
-                alert('Terjadi kendala koneksi saat menyimpan. Screenshot halaman ini dan lapor ke guru/admin.');
-                console.error(error);
-            });
+                
+                document.getElementById('resultContainer').style.display = 'block';
+                document.getElementById('resBenar').innerText = totalCorrect;
+                document.getElementById('resSalah').innerText = totalSalah;
+                document.getElementById('resKosong').innerText = totalKosong;
+                document.getElementById('resNilai').innerText = finalScore;
+
+                localStorage.removeItem('akari_cbt_endTime');
+                localStorage.removeItem('akari_cbt_answers');
+                
+            }, 1500);
         }
     </script>
 </body>
