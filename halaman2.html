@@ -138,7 +138,7 @@
             <ul class="rules-list">
                 <li>✅ Kuis ini terdiri dari <strong>25 Soal</strong>.</li>
                 <li>✅ Waktu pengerjaan adalah <strong>90 Menit</strong> tanpa jeda.</li>
-                <li>✅ Terdapat 4 tipe soal: <strong>Isian Singkat</strong>, <strong>Pilihan Ganda</strong>, <strong>Pilihan Ganda Kompleks</strong> (centang semua jawaban benar), dan <strong>Tabel Interaktif</strong>.</li>
+                <li>✅ Terdapat 4 tipe soal: <strong>Isian Singkat</strong>, <strong>Pilihan Ganda</strong>, <strong>Pilihan Ganda Kompleks</strong> (centang semua jawaban benar), dan <strong>Tabel Kebenaran</strong>.</li>
                 <li>✅ <strong>TIDAK ADA PENGURANGAN NILAI</strong> jika jawaban salah. Kosongkan jika tidak tahu.</li>
                 <li>⚠️ Jika waktu habis (00:00), sistem akan <strong>menyimpan jawaban otomatis</strong>.</li>
                 <li>⚠️ <strong>JANGAN merefresh/reload</strong> halaman ini saat tes berlangsung agar jawaban tidak hilang.</li>
@@ -202,7 +202,7 @@
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
         <h2 style="color: var(--success-color); margin-bottom: 10px;">Tes Selesai!</h2>
-        <p style="color: var(--text-muted);">Hasil CBT kamu sudah direkap. Berikut adalah rincian pengerjaanmu:</p>
+        <p style="color: var(--text-muted); margin-bottom: 25px;">Hasil CBT kamu sudah direkap dan berhasil dikirim ke sistem Akari Bimbel. Berikut adalah rincian pengerjaanmu:</p>
         
         <div class="result-stats-grid">
             <div class="stat-card">
@@ -233,6 +233,8 @@
     </div>
 
     <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwZFOMTSuTIVmVWaKM0mowgyXe0Q0wNU1UHSK8ChVTXGgB9idmcrU3Y9JvVJfTJ-IwcNQ/exec'; 
+
         const studentName = localStorage.getItem('akari_nama') || 'Siswa Tanpa Nama';
         const studentClass = localStorage.getItem('akari_kelas') || 'Kelas Tidak Diketahui';
         
@@ -243,17 +245,17 @@
         const finalQuestions = [
             // SOAL 1-10
             { 
-                id: 1, type: 'isian', topic: 'Kalkulus / Integral', 
+                id: 1, type: 'isian', topic: 'Kalkulus', 
                 q: 'Misalkan \\( k \\) suatu bilangan positif yang memenuhi \\( f(x) = 6x + k \\) dan \\[ \\int_0^k f(x) dx = f(3k) \\] Jika \\( n < k < n+1 \\) untuk suatu bilangan asli \\( n \\), maka \\( n = \\dots \\)',
                 ans: '4' 
             },
             { 
-                id: 2, type: 'isian', topic: 'Aljabar / Logaritma', 
+                id: 2, type: 'isian', topic: 'Aljabar', 
                 q: 'Jika \\( \\log p = 3 \\), \\( \\log q = 12 \\), \\( \\log r = 20 \\), dan \\( \\log \\left( \\frac{p^m q}{r} \\right) = 7 \\), maka \\( m = \\dots \\)',
                 ans: '5' 
             },
             { 
-                id: 3, type: 'isian', topic: 'Sistem Persamaan Linear', 
+                id: 3, type: 'isian', topic: 'Persamaan', 
                 q: 'Jumlah dua bilangan adalah 27 dan selisih kedua bilangan tersebut adalah 9. Bilangan terbesar di antara keduanya adalah . . .',
                 ans: '18' 
             },
@@ -263,13 +265,13 @@
                 ans: '16' 
             },
             { 
-                id: 5, type: 'pg', topic: 'Pertidaksamaan', 
+                id: 5, type: 'pg', topic: 'Aljabar', 
                 q: 'Nilai akhir siswa agar lulus suatu mata pelajaran adalah 70. Misalkan formula nilai akhir adalah \\( N = 1,3x + 15 \\) dengan \\( x \\) merupakan nilai ujian. Batasan nilai ujian agar siswa lulus adalah . . .',
                 options: ['\\( x \\ge \\frac{550}{13} \\)', '\\( x \\ge \\frac{550}{26} \\)', '\\( x > \\frac{550}{13} \\)', '\\( x \\le \\frac{550}{26} \\)', '\\( x \\le \\frac{550}{13} \\)'], 
                 ans: 0 
             },
             { 
-                id: 6, type: 'pg', topic: 'Geometri Analitik', 
+                id: 6, type: 'pg', topic: 'Geometri', 
                 q: 'Diberikan titik \\( A(2, 0) \\), \\( B(6, 0) \\), \\( C(6, 5) \\), \\( D(4, 8) \\), dan \\( E(2, 7) \\). Luas segilima \\( ABCDE \\) adalah . . .',
                 options: ['26', '32', '28', '\\( 45/2 \\)', '30'], 
                 ans: 2 
@@ -287,7 +289,7 @@
                 ans: 3 
             },
             { 
-                id: 9, type: 'pg', topic: 'Turunan', 
+                id: 9, type: 'pg', topic: 'Kalkulus', 
                 q: 'Diketahui kurva \\( y = px^3 - 2x^2 + q(x - 2) + 10 \\). Jika titik \\( (2, 18) \\) terletak pada kurva dan garis singgung kurva di titik tersebut sejajar dengan sumbu-\\( x \\), nilai \\( p + q = \\dots \\)',
                 options: ['\\( -12 \\)', '\\( -14 \\)', '\\( -16 \\)', '14', '12'], 
                 ans: 1 
@@ -301,62 +303,62 @@
             
             // SOAL 11-20
             { 
-                id: 11, type: 'pg', topic: 'Sistem Persamaan Aljabar', 
+                id: 11, type: 'pg', topic: 'Persamaan', 
                 q: 'Jika \\( p > 0 \\) dan sistem persamaan \\[ x^2 + px - y = -16 \\] \\[ -4x + y = 0 \\] memiliki tepat satu solusi, nilai \\( p = \\dots \\)',
                 options: ['6', '8', '10', '12', '14'], 
                 ans: 3 
             },
             { 
-                id: 12, type: 'pg', topic: 'Geometri Ruang', 
+                id: 12, type: 'pg', topic: 'Geometri', 
                 q: 'Sebuah wadah aluminium berbentuk silinder tanpa tutup memiliki jari-jari bagian dalam 15 cm dan tinggi bagian dalam 20 cm. Tebal selimut dan alas silinder tersebut adalah 1 cm.<br>Jika volume bahan (aluminium) yang diperlukan untuk membuat wadah tersebut adalah \\( k\\pi \\text{ cm}^3 \\), nilai \\( k = \\dots \\)',
                 options: ['856', '866', '876', '886', '896'], 
                 ans: 2 
             },
             { 
-                id: 13, type: 'pg', topic: 'Limit Fungsi', 
+                id: 13, type: 'pg', topic: 'Kalkulus', 
                 q: 'Nilai dari \\[ \\lim_{x \\to \\infty} 4x \\left( \\sqrt{1 + \\frac{5}{x}} - \\sqrt{1 - \\frac{5}{x}} \\right) = \\dots \\]',
                 options: ['10', '15', '20', '25', '30'], 
                 ans: 2 
             },
             { 
-                id: 14, type: 'pg', topic: 'Persamaan Lingkaran', 
+                id: 14, type: 'pg', topic: 'Geometri', 
                 q: 'Garis \\( x = 3 \\) memotong lingkaran \\[ x^2 - 12x + y^2 - 4y = C \\] di titik \\( A \\) dan \\( B \\). Jika titik \\( A \\) berada di kuadran I dan gradien garis singgung lingkaran di titik \\( A \\) adalah \\( m = \\frac{3}{4} \\), nilai \\( C = \\dots \\)',
                 options: ['\\( -10 \\)', '\\( -12 \\)', '\\( -15 \\)', '15', '25'], 
                 ans: 2 
             },
             { 
-                id: 15, type: 'pg', topic: 'Aplikasi Trigonometri', 
+                id: 15, type: 'pg', topic: 'Trigonometri', 
                 q: 'Andi merancang kanal saluran air hujan dari lembaran seng panjang yang memiliki lebar 60 cm. Saluran ini dibuat dengan melipat kedua sisi seng ke atas sehingga membentuk penampang berbentuk trapesium sama kaki tanpa tutup (seperti pada ilustrasi).<br><br>Bagian dasar saluran memiliki lebar \\( p = 20 \\text{ cm} \\), dan kedua sisi dinding yang dilipat masing-masing memiliki panjang \\( q = 20 \\text{ cm} \\). Jika sudut kemiringan dinding saluran terhadap garis horizontal adalah \\( \\theta \\), luas penampang saluran air sebagai fungsi dalam \\( \\theta \\) adalah \\[ L = a \\sin \\theta + b \\sin(2\\theta) \\] dengan \\( a + b = \\dots \\)',
                 image: 'trapezoid.jpg',
                 options: ['400', '500', '600', '800', '1000'], 
                 ans: 2 
             },
             { 
-                id: 16, type: 'pg', topic: 'Polinomial / Suku Banyak', 
+                id: 16, type: 'pg', topic: 'Polinomial', 
                 q: 'Diketahui suku banyak \\( f(x) = x^4 + ax^3 + bx^2 + 5x - 2 \\) apabila dibagi oleh \\( x^2 - 4 \\) menghasilkan sisa \\( 13x + 2 \\). Nilai dari \\( a + b = \\dots \\)',
                 options: ['\\( -1 \\)', '0', '1', '\\( -2 \\)', '2'], 
                 ans: 0 
             },
             { 
-                id: 17, type: 'pg', topic: 'Fungsi / Aplikasi Turunan', 
+                id: 17, type: 'pg', topic: 'Kalkulus', 
                 q: 'Sebuah tangki penyimpanan zat cair mengalami penambahan kapasitas volume saat terkena panas, yang dapat dinyatakan dalam fungsi berikut: \\[ V(T) = 0,04T^3 + 0,5T^2 + 15T \\] dengan \\( T \\) adalah suhu dalam derajat celcius dan \\( V(T) \\) adalah penambahan volume dalam liter. Apabila terdapat 8 tangki dengan jenis dan ukuran yang sama, total penambahan volume dari tangki-tangki tersebut ketika terkena panas dengan suhu yang sama dapat dinyatakan dengan . . .',
                 options: ['\\( 0,32T^3 + 4T^2 + 120T \\)', '\\( 0,4T^3 + 5T^2 + 150T \\)', '\\( 0,32T^3 + 4T^2 + 15T \\)', '\\( 0,04T^3 + 0,5T^2 + 120T \\)', '\\( 0,32T^3 + 0,5T^2 + 120T \\)'], 
                 ans: 0 
             },
             { 
-                id: 18, type: 'pg_kompleks', topic: 'Transformasi Geometri', 
+                id: 18, type: 'pg_kompleks', topic: 'Geometri', 
                 q: 'Garis \\( g \\) merupakan bayangan garis \\( 4x + 3y = 12 \\) yang dirotasikan sejauh \\( 90^\\circ \\) berlawanan arah jarum jam dengan pusat rotasi \\( (1, -1) \\). Manakah koordinat titik yang terletak pada garis \\( g \\)?<br><br><strong>Pilihlah semua jawaban benar! Jawaban benar lebih dari satu.</strong>',
                 options: ['\\( (0, 1) \\)', '\\( (2, 2) \\)', '\\( (-4, -2) \\)', '\\( (4, 4) \\)', '\\( (1, 3) \\)'], 
                 ans: [0, 2, 3] 
             },
             { 
-                id: 19, type: 'pg', topic: 'Limit Fungsi / Asimtot', 
+                id: 19, type: 'pg', topic: 'Kalkulus', 
                 q: 'Seorang pengusaha roti menjual dagangannya sebanyak \\( x \\) bungkus dan akan memperoleh keuntungan (dalam jutaan rupiah) yang dapat dinyatakan dengan fungsi \\[ K(x) = \\frac{8x^2 + 5x + 12}{2x^2 + 4x + 5} \\] Keuntungan yang akan diperoleh pengusaha tersebut, apabila ia menjual roti dengan jumlah sangat banyak adalah . . .',
                 options: ['Rp2.000.000,00', 'Rp4.000.000,00', 'Rp6.000.000,00', 'Rp8.000.000,00', 'Rp10.000.000,00'], 
                 ans: 1 
             },
             { 
-                id: 20, type: 'pg_kompleks', topic: 'Limit Fungsi Trigonometri', 
+                id: 20, type: 'pg_kompleks', topic: 'Kalkulus', 
                 q: 'Diberikan sebuah segitiga yang diletakkan di dalam setengah lingkaran dengan titik pusat \\( O \\). Kedua sisi segitiga bersinggungan tepat dari titik \\( O \\) ke busur lingkaran sehingga memiliki panjang yang sama dengan jari-jari lingkaran. Kedua sisi tersebut mengapit sudut \\( \\alpha \\).<br><br>Luas daerah segitiga dinyatakan dengan \\( P(\\alpha) \\) dan luas daerah setengah lingkaran dinyatakan dengan \\( Q(\\alpha) \\) dimana \\( 0 < \\alpha < \\pi \\).<br>Bagaimana nilai limit fungsi perbandingan luas tersebut? <strong>Pilihlah semua pernyataan yang benar! Jawaban benar lebih dari satu.</strong>',
                 options: [
                     '\\( \\lim_{\\alpha \\to \\pi/6} \\frac{P(\\alpha)}{Q(\\alpha)} = \\frac{1}{2\\pi} \\)',
@@ -370,7 +372,7 @@
             
             // SOAL 21-25
             {
-                id: 21, type: 'tabel_bs', topic: 'Aritmetika / Geometri Terapan',
+                id: 21, type: 'tabel_bs', topic: 'Aritmetika',
                 q: 'Pak Budi akan membuat kerangka ornamen jendela berbentuk lingkaran. Diketahui jari-jari lingkaran tersebut dirancang sebesar \\( r = \\frac{\\sqrt{3}}{2} \\) meter. Beliau ingin membeli logam dengan kriteria "Pas". Maksud pas di sini adalah: panjang logam cukup untuk membuat kerangka dan sisanya tidak lebih dari 1 meter.<br><br>Berikut ini adalah jenis logam dan panjangnya yang dapat dipilih Pak Budi:<br><ul><li><strong>Logam X:</strong> Panjang 5 m</li><li><strong>Logam Y:</strong> Panjang 6 m</li><li><strong>Logam Z:</strong> Panjang 7 m</li></ul><br>Tentukan apakah pilihan logam yang akan dibeli Pak Budi berikut ini <strong>Pas</strong> atau <strong>Tidak Pas</strong>! (Gunakan \\( \\pi \\approx 3,14 \\) dan \\( \\sqrt{3} \\approx 1,73 \\))',
                 col1: 'Pas', col2: 'Tidak Pas',
                 statements: [
@@ -381,7 +383,7 @@
                 ans: [0, 1, 1] 
             },
             {
-                id: 22, type: 'tabel_bs', topic: 'Aljabar / Operasi Biner',
+                id: 22, type: 'tabel_bs', topic: 'Aljabar',
                 q: 'Operasi biner \\( \\otimes \\) didefinisikan sebagai \\( x \\otimes y = \\frac{(x+y)^2 - 2xy}{x+y} \\) untuk setiap bilangan real tidak negatif \\( x \\) dan \\( y \\).<br>Jika \\( m \\otimes 3 = 5 \\), tentukan <strong>Benar</strong> atau <strong>Salah</strong> pada setiap pernyataan berikut.',
                 col1: 'Benar', col2: 'Salah',
                 statements: [
@@ -392,21 +394,21 @@
                 ans: [0, 1, 0] 
             },
             {
-                id: 23, type: 'pg', topic: 'Fungsi Komposisi',
+                id: 23, type: 'pg', topic: 'Fungsi',
                 image: 'fungsikomposisi.jpg',
                 q: 'Tentukan nilai \\( (g \\circ f)(3) + (f - g)(5) = \\dots \\)',
                 options: ['5', '6', '7', '8', '9'],
                 ans: 3 
             },
             {
-                id: 24, type: 'pg', topic: 'Grafik Fungsi Kuadrat / Mutlak',
+                id: 24, type: 'pg', topic: 'Fungsi',
                 image: 'komposisipertidaksamaan.jpg',
                 q: 'Diberikan grafik fungsi \\( y = f(x) \\) yang terdefinisi pada interval \\( 2 \\le x \\le 8 \\). Berapa banyak pasangan titik \\( (x, y) \\) pada grafik tersebut yang \\( x \\) dan \\( y \\) keduanya merupakan bilangan bulat?',
                 options: ['5', '6', '7', '8', '9'],
                 ans: 2 
             },
             {
-                id: 25, type: 'pg', topic: 'Kesebangunan',
+                id: 25, type: 'pg', topic: 'Geometri',
                 image: 'kesebangunan.jpg',
                 q: 'Misalkan \\( ABC \\) adalah segitiga siku-siku dengan \\( \\angle ACB = 90^\\circ \\). Titik \\( D \\) adalah titik tengah sisi \\( AB \\) dan titik \\( E \\) terletak pada sisi \\( AC \\) sehingga \\( DE \\) tegak lurus \\( AB \\).<br><br>Jika panjang \\( AB = 2\\sqrt{35} \\) dan \\( AC = 10 \\), maka panjang \\( CE \\) adalah \\( \\dots \\)',
                 options: ['2', '3', '4', '5', '6'],
@@ -729,58 +731,155 @@
             let totalCorrect = 0;
             let totalKosong = 0;
             
+            // Daftar 10 Topik Utama SMA untuk Data Spreadsheet
+            const topicList = ["Kalkulus", "Aljabar", "Persamaan", "Peluang", "Geometri", "Polinomial", "Statistika", "Trigonometri", "Aritmetika", "Fungsi"];
+            let topicStats = {};
+            topicList.forEach(t => {
+                topicStats[t] = { correct: 0, total: 0 };
+            });
+
             finalQuestions.forEach((q, index) => {
                 const ans = currentAnswers[index];
+                let isKosong = false;
+                let isCorrect = false;
                 
                 if (ans === undefined || ans === null || 
                    (typeof ans === 'string' && String(ans).trim() === '') || 
                    (Array.isArray(ans) && ans.length === 0)) {
-                    totalKosong++;
+                    isKosong = true;
                 } else {
                     if (q.type === 'isian') {
                         if (String(ans).trim().toLowerCase() === String(q.ans).trim().toLowerCase()) {
-                            totalCorrect++;
+                            isCorrect = true;
                         }
                     } else if (q.type === 'pg') {
                         if (parseInt(ans) === parseInt(q.ans)) {
-                            totalCorrect++;
+                            isCorrect = true;
                         }
                     } else if (q.type === 'pg_kompleks') {
                         if (Array.isArray(ans) && Array.isArray(q.ans)) {
-                            let isCorrect = ans.length === q.ans.length && q.ans.every(val => ans.includes(val));
-                            if(isCorrect) totalCorrect++;
+                            let correct = ans.length === q.ans.length && q.ans.every(val => ans.includes(val));
+                            if(correct) isCorrect = true;
                         }
                     } else if (q.type === 'tabel_bs') {
                          if (Array.isArray(ans) && Array.isArray(q.ans)) {
-                             let isCorrect = true;
-                             if(ans.length !== q.ans.length) isCorrect = false;
+                             let correct = true;
+                             if(ans.length !== q.ans.length) correct = false;
                              else {
                                  for(let i=0; i<q.ans.length; i++) {
-                                     if(ans[i] !== q.ans[i]) isCorrect = false;
+                                     if(ans[i] !== q.ans[i]) correct = false;
                                  }
                              }
-                             if(isCorrect) totalCorrect++;
+                             if(correct) isCorrect = true;
                          }
                     }
+                }
+
+                topicStats[q.topic].total++;
+
+                if (isKosong) {
+                    totalKosong++;
+                } else if (isCorrect) {
+                    totalCorrect++;
+                    topicStats[q.topic].correct++;
                 }
             });
 
             let totalSalah = totalQuestions - totalCorrect - totalKosong;
             const finalScore = Math.round((totalCorrect / totalQuestions) * 100); 
+            let tingkatSkill = finalScore >= 80 ? "Expert" : (finalScore >= 55 ? "Moderate" : "Beginner");
 
-            setTimeout(() => {
+            // Hitung Durasi (Kebal Refresh)
+            const endTime = parseInt(localStorage.getItem('akari_cbt_endTime'));
+            let timeSpentInSeconds = TOTAL_TIME_SEC; 
+            if (endTime) {
+                const timeLeftNow = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+                timeSpentInSeconds = TOTAL_TIME_SEC - timeLeftNow;
+            }
+            const spentMin = Math.floor(timeSpentInSeconds / 60);
+            const spentSec = timeSpentInSeconds % 60;
+            const durasiText = `${spentMin} Menit ${spentSec} Detik`;
+
+            // Format Detail & Kategori per Topik
+            let detailArr = [];
+            let kategoriTopikArr = [];
+
+            topicList.forEach(topic => {
+                const stat = topicStats[topic];
+                detailArr.push(`${topic}: ${stat.correct}/${stat.total}`);
+
+                let predikat = "Need Improvement";
+                if (stat.total > 0) {
+                    let persentaseTopik = stat.correct / stat.total;
+                    if (persentaseTopik >= 0.8) predikat = "Excellence";
+                    else if (persentaseTopik >= 0.5) predikat = "Good";
+                } else {
+                    predikat = "-";
+                }
+                kategoriTopikArr.push(predikat);
+            });
+
+            const detailText = detailArr.join(' | ');
+
+            const payload = {
+                action: 'simpanHasilTes',
+                data: {
+                    timestamp: new Date().toLocaleString('id-ID'),
+                    nama: studentName,
+                    kelas: studentClass,
+                    skor: finalScore,
+                    benar: totalCorrect,
+                    salah: totalSalah,
+                    kosong: totalKosong,
+                    tingkat_skill: tingkatSkill,
+                    durasi: durasiText, 
+                    detail: detailText,
+                    kat_1: kategoriTopikArr[0],
+                    kat_2: kategoriTopikArr[1],
+                    kat_3: kategoriTopikArr[2],
+                    kat_4: kategoriTopikArr[3],
+                    kat_5: kategoriTopikArr[4],
+                    kat_6: kategoriTopikArr[5],
+                    kat_7: kategoriTopikArr[6],
+                    kat_8: kategoriTopikArr[7],
+                    kat_9: kategoriTopikArr[8],
+                    kat_10: kategoriTopikArr[9]
+                }
+            };
+
+            fetch(scriptURL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload) 
+            })
+            .then(response => response.json())
+            .then(data => {
                 document.getElementById('loadingOverlay').style.display = 'none';
+                if (data.status === 'success') {
+                    document.getElementById('resultContainer').style.display = 'block';
+                    document.getElementById('resBenar').innerText = totalCorrect;
+                    document.getElementById('resSalah').innerText = totalSalah;
+                    document.getElementById('resKosong').innerText = totalKosong;
+                    document.getElementById('resNilai').innerText = finalScore;
+
+                    localStorage.removeItem('akari_cbt_endTime');
+                    localStorage.removeItem('akari_cbt_answers');
+                } else {
+                    alert("Respon API gagal: " + data.message);
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert('Terjadi kendala koneksi saat menyimpan. Screenshot halaman ini dan lapor ke admin.');
+                console.error(error);
                 
+                // Fallback menampilkan hasil secara lokal jika internet bermasalah
                 document.getElementById('resultContainer').style.display = 'block';
                 document.getElementById('resBenar').innerText = totalCorrect;
                 document.getElementById('resSalah').innerText = totalSalah;
                 document.getElementById('resKosong').innerText = totalKosong;
                 document.getElementById('resNilai').innerText = finalScore;
-
-                localStorage.removeItem('akari_cbt_endTime');
-                localStorage.removeItem('akari_cbt_answers');
-                
-            }, 1500);
+            });
         }
     </script>
 </body>
